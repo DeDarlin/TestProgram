@@ -1,0 +1,2 @@
+Вивід 3 cout print Console.WriteLine 3
+Отримання тексту з клавіатури 3 input cin Console.ReadLine 3

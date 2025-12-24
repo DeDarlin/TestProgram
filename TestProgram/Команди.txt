@@ -1,0 +1,2 @@
+Вивід 3 cout print printf 2
+Форматування 3 f"" format() $"" 1

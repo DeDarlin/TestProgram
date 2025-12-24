@@ -1,0 +1,3 @@
+22 3 int float bool 1
+3.0 3 int float string 2
+"mama" 3 string float double 1
