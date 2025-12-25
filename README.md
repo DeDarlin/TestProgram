@@ -42,7 +42,7 @@ Architecture flow:
 1. Build the project in Visual Studio (Release | x64)
 2. Open PowerShell in project folder
 3. Run the executable: 
-> x64\Release\TestProgram.exe
+`x64\Release\TestProgram.exe`
 
 
 ### Using Visual Studio
