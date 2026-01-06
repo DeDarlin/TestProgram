@@ -1,21 +1,20 @@
-﻿#pragma once
-
-using namespace std;
+#pragma once
 
 class User
 {
-	string login, password;
+	std::string login, password;
 
 public:
 
-	User(string login, string password) : login(login), password(password) {}
+	User(const std::string& login, const std::string& password)
+		: login(login), password(password) {}
 
-	void Categories(int inAdmin = 0);
+	void Categories(bool inAdmin = false);
 
-	void Results();
+	void Results() const;
 
 	void menu();
 
-    string getLogin() const { return login; }
+    const string& getLogin() const { return login; }
 };
 

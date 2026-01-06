@@ -1,29 +1,33 @@
-﻿#include <fstream>
+#include <vector>
+#include <string>
+#include <iostream>
+#include <fstream>
 #include "User.h"
 #include "Menu.h"
-#include "functions.h"
+#include "utils.h"
 #include "Category.h"
+#include "Console.h"
 
-void User::Categories(int isAdmin)
+void User::Categories(bool isAdmin)
 {
-	system("cls");
-	vector<string> Categories;
-	ifstream in("Categories.txt");
+	Console::Clear();
+	std::vector<std::string> Categories;
+	std::ifstream in("Categories.txt");
 
 	if (!in.is_open())
 	{
 		gotoxy(x, y);
 		cout << "Пока категорій немає";
-		Sleep(1000);
+		Console::SleepMs(1000);
 		return;
 	}
 
-	int size = CountLines("Categories.txt");
-	for (size_t i = 0; i < size; i++)
+	
+	std::string temp;
+	while (std::getline(in, temp))
 	{
-		string temp;
-		in >> temp;
-		Categories.push_back(temp);
+		if (!temp.empty())
+			Categories.push_back(temp);
 	}
 	in.close();
 	Categories.push_back("Вихід");
@@ -32,46 +36,38 @@ void User::Categories(int isAdmin)
 
 	if (c == Categories.size() - 1) return;
 
-	if (isAdmin == 1)
-	{
-		Category category(getLogin(), Categories[c]);
-		category.adminMenu();
-	}
-	else
-	{
-		Category category(getLogin(), Categories[c]);
-		category.menu();
-	}
+	Category category(getLogin(), Categories[c]);
+	isAdmin ? category.adminMenu() : category.menu();
 }
 
-void User::Results()
+void User::Results() const
 { 
-	system("cls");
-	ifstream in(login + "_statistic.txt");
+	Console::Clear();
+	std::ifstream in(login + "_statistic.txt");
 	if (in.is_open())
 	{
-		string temp1, temp2;
-		int size = CountLines(login + "_statistic.txt");
+		std::string temp1, temp2;
+		int size = utils::CountLines(login + "_statistic.txt");
 		for (size_t i = 0; i < size; i++)
 		{
 			gotoxy(x, y + i);
 			in >> temp1 >> temp2;
-			cout << temp1 << " " << temp2 << endl;
+			std::cout << temp1 << " " << temp2 << endl;
 		}
 	}
 	else
 	{
 		gotoxy(x, y);
-		cout << "Поки немає результатів";
+		std::cout << "Поки немає результатів";
 	}
-	Sleep(1000);
+	Console::SleepMs(1000);
 }
 
 void User::menu()
 {
 	while (true)
 	{
-		system("cls");
+		Console::Clear();
 		int c = Menu::select_vertical({ "Категорії", "Результати", "Вихід" }, HorizontalAlignment::Center, 12);
 		switch (c)
 		{

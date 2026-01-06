@@ -1,47 +1,31 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <fstream>
-#include "functions.h"
-
-using namespace std;
 
 class Category
 {
-	string user;
-	string current;
-	vector<string> tests;
+    std::string user;
+    std::string categoryName;
+    std::vector<std::string> tests;
 
 public:
 
-	Category(const string& user, const string& current) : user(user), current(current)
-	{ 
-		ifstream in(current + ".txt");
-		if (in.is_open())
-		{
-			int size = CountLines(current + ".txt");
-			for (size_t i = 0; i < size; i++)
-			{
-				string temp;
-				in >> temp;
-				tests.push_back(temp);
-			}
-		}
-		else
-			tests.push_back("N");
-		in.close();
-	}
+    Category(const std::string& user, const std::string& categoryName)
+        : user(user), categoryName(categoryName) {
+        LoadTests();
+    }
 
-	void Delete();
+    bool LoadTests();
 
-	void DeleteTest();
+    void Delete();
 
-	void Tests();
+    void DeleteTest();
 
-	void NewTest();
+    void Tests();
 
-	void adminMenu();
-	
-	void menu();
+    void NewTest();
+
+    void adminMenu();
+
+    void menu();
 };
-

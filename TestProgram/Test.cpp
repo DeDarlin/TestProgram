@@ -1,34 +1,35 @@
-﻿#include <fstream>
+#include <fstream>
 #include "Test.h"
 #include "Menu.h"
-#include "functions.h"
+#include "utils.h"
+#include "Console.h"
 
 void Test::Delete()
 {
-	string temp = current + ".txt";
+	std::string temp = current + ".txt";
 	remove(temp.c_str());
 }
 
-string Test::start()
+std::string Test::start()
 {
-	system("cls");
-	int ques = CountLines(current + ".txt");
+	Console::Clear();
+	int ques = utils::CountLines(current + ".txt");
 	int stat = 0;
-	ifstream in(current + ".txt");
+	std::ifstream in(current + ".txt");
 	for (size_t i = 0; i < ques; i++)
 	{
 		gotoxy(x + 10, y - 4);
-		cout << current;
+		std::cout << current;
 		gotoxy(x + 10, y - 3);
-		cout << i << " / " << ques;
+		std::cout << i << " / " << ques;
 
-		string temp;
+		std::string temp;
 		in >> temp;
 		gotoxy(x + 10, y - 1);
-		cout << temp;
+		std::cout << temp;
 		int answ, correct;
 		in >> answ;
-		vector<string> answr;
+		std::vector<std::string> answr;
 		for (size_t i = 0; i < answ; i++)
 		{
 			in >> temp;
@@ -41,13 +42,13 @@ string Test::start()
 			stat++;
 		}
 	}
-	system("cls");
+	Console::Clear();
 	gotoxy(x + 5, y - 1);
-	cout << current;
+	std::cout << current;
 	gotoxy(x + 5, y);
-	cout << ques << "/" << stat;
-	Sleep(1000);
+	std::cout << ques << "/" << stat;
+	Console::SleepMs(1000);
 	in.close();
-	string temp = to_string(ques) + "/" + to_string(stat);
+	std::string temp = to_string(ques) + "/" + to_string(stat);
 	return temp;
 }

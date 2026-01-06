@@ -1,6 +1,4 @@
-﻿#pragma once
-
-using namespace std;
+#pragma once
 
 class Test
 {

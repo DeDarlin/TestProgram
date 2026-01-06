@@ -1,34 +1,35 @@
 #include <fstream>
 #include "Admin.h"
 #include "Menu.h"
-#include "functions.h"
+#include "utils.h"
 #include "Category.h"
+#include "Console.h"
 
 void Admin::AddCategory()
 {
-	system("cls");
+	Console::Clear();
 	gotoxy(x, y);
-	string NewCategory;
-	cout << "Введіть назву нової категорії:"; getline(cin, NewCategory);
-	ofstream out("Categories.txt", ios::app);
+	std::string NewCategory;
+	std::cout << "Введіть назву нової категорії:"; std::getline(cin, NewCategory);
+	std::ofstream out("Categories.txt", ios::app);
 	out << NewCategory << endl;
 	gotoxy(x, y + 1);
-	cout << "Категорія успішно додана";
+	std::cout << "Категорія успішно додана";
 }
 
 void Admin::DeleteCategory()
 {
-	system("cls");
+	Console::Clear();
 	gotoxy(x, y - 1);
 	cout << "Виберіть категорію для видалення: ";
 
-	vector<string> Categories;
-	ifstream in("Categories.txt");
-	int size = CountLines("Categories.txt");
+	std::vector<std::string> Categories;
+	std::ifstream in("Categories.txt");
+	int size = utils::CountLines("Categories.txt");
 	for (size_t i = 0; i < size; i++)
 	{
-		string temp;
-		in >> temp;
+		std::string temp;
+		std::getline(in, temp);
 		Categories.push_back(temp);
 	}
 	in.close();
@@ -36,9 +37,8 @@ void Admin::DeleteCategory()
 
 	int c = Menu::select_vertical({ Categories }, HorizontalAlignment::Center, 12);
 
-	if (c == Categories.size() - 1) exit(0);
+	if (c == Categories.size() - 1) return;
 
-	in.close();
 	Category category(getLogin(), Categories[c]);
 	category.Delete();
 }
@@ -47,7 +47,7 @@ void Admin::WorkWithTests()
 {
 	while (true)
 	{
-		system("cls");
+		Console::Clear();
 		int c = Menu::select_vertical({ "Категорії", "Створити категорію", "Видалити категорію", "Вихід" }, HorizontalAlignment::Center, 12);
 		switch (c)
 		{
@@ -66,34 +66,34 @@ void Admin::WorkWithTests()
 	}
 }
 
-void Admin::WorkWithUsers()
+void Admin::UsersResults()
 {
-	system("cls");
+	Console::Clear();
 	gotoxy(x, y);
-	ifstream in("Users.txt");
+	std::ifstream in("Users.txt");
 	if (in.is_open())
 	{
-		string temp, a, b, c;
-		int size = CountLines("Users.txt");
+		std::string temp, a, b, c;
+		int size = utils::CountLines("Users.txt");
 		for (size_t i = 0; i < size; i++)
 		{
 			in >> temp >> a >> b >> c;
 			gotoxy(x - 10, y + i);
-			cout << temp;
+			std::cout << temp;
 			Results();
 		}
-		Sleep(2000);
+		Console::SleepMs(2000);
 	}
 	else
-		cout << "Поки немає користувачів";
-	Sleep(2000);
+		std::cout << "Поки немає користувачів";
+	Console::SleepMs(2000);
 }
 
 void Admin::menu()
 {
 	while (true)
 	{
-		system("cls");
+		Console::Clear();
 		int c = Menu::select_vertical({ "Управління тестами", "Управління користувачами", "Вихід" }, HorizontalAlignment::Center, 12);
 		switch (c)
 		{
@@ -101,7 +101,7 @@ void Admin::menu()
 			WorkWithTests();
 			break;
 		case 1:
-			WorkWithUsers();
+			UsersResults();
 			break;
 		case 2:
 			return;

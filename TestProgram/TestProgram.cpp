@@ -4,155 +4,164 @@
 
 #undef byte
 #include <string>
+#include <iostream>
 #include <fstream>
 #include "TestProgram.h"
 #include "Menu.h"
 #include "md5.h"
 #include "User.h"
 #include "Admin.h"
-#include "functions.h"
+#include "utils.h"
+#include "Console.h"
 
-using namespace std;
-
-bool TestProgram::InSystem(string login)
+bool TestProgram::UserExists(const std::string& login)
 {
-	ifstream in("Guests.txt");
-	bool flag = false;
-	if (in.is_open())
+	std::ifstream in("Users.txt");
+	if (!in) return false;
+
+	std::string fileLogin;
+	while (in >> fileLogin)
 	{
-		string temp;
-		size_t c = CountLines("Guests.txt");
-		for (size_t i = 0; i < c; i++)
-		{
-			in >> temp;
-			if (temp == login)
-			{
-				flag = true; break;
-			}
-		}
+		if (fileLogin == login)
+			return true;
+
+		std::string skip;
+		std::getline(in, skip);
+	}
+	return false;
+}
+
+Role TestProgram::DetectRole(const std::string& login)
+{
+	ifstream in("Users.txt");
+	if (!in.is_open())
+	{
+		std::string tlogin;
+		in >> tlogin;
+		if (tlogin == login)
+		return Role::Admin;
 	}
 	in.close();
-	return flag;
+
+	return Role::User;
 }
 
-string TestProgram::RemoveSpaces(const string& s)
+void TestProgram::SignIn()
 {
-	string out;
-	out.reserve(s.size());
-	for (char c : s) {
-		if (c != ' ') out.push_back(c);
-	}
-	return out;
-}
-
-void TestProgram::SingIn()
-{
-	system("cls");
-	string login, password;
+	Console::Clear();
+	std::string login, password;
 	gotoxy(x, y);
-	cout << "Введіть ПІБ: "; getline(cin, login);
-	login = RemoveSpaces(login);
+	std::cout << "Введіть ПІБ: "; std::getline(cin, login);
+	login = utils::RemoveSpaces(login);
 	gotoxy(x, y + 1);
-	cout << "Введіть пароль: "; getline(cin, password);
+	std::cout << "Введіть пароль: "; std::getline(cin, password);
 
 	ifstream in("Users.txt");
 	if (!in.is_open())
 	{
-		system("cls");
+		Console::Clear();
 		gotoxy(x, y);
 		cout << "Файл не знайдено" << endl;
-		Sleep(1000);
+		Console::SleepMs(1000);
 		return;
 	}
 
-	string temp_login, temp_password;
+	std::string tlogin;
+	std::string tpass;
+	std::string rest;
 	bool flag = false;
-	size_t s = static_cast<size_t>(-1);
 	size_t i = 0;
 
-	while (in >> temp_login >> temp_password)
+	while (in >> tlogin >> tpass)
 	{
-		if (temp_login == login && temp_password == md5(password))
+		if (tlogin == login && tpass == md5(password))
 		{
 			flag = true;
-			s = i;
 			break;
 		}
-		++i;
+		std::getline(in, rest);
 	}
 	in.close();
 
 	if (!flag)
 	{
-		system("cls");
+		Console::Clear();
 		gotoxy(x, y);
-		cout << "Введені не вірні дані" << endl;
-		Sleep(1000);
+		std::cout << "Введені не вірні дані" << endl;
+		Console::SleepMs(1000);
 		return;
 	}
 
-	if (s == 0)
+	Role role = DetectRole(login);
+
+	if (role == Role::Admin)
 	{
 		Admin admin(login, password);
 		admin.menu();
 	}
-	User user(login, password);
-	user.menu();
+	else
+	{
+		User user(login, password);
+		user.menu();
+	}
 }
 
-void TestProgram::SingUp()
+void TestProgram::SignUp()
 {
-	system("cls");
+	Console::Clear();
 
 	struct Abonent
 	{
-		string login, password, home_address, mobile_number;
+		std::string login;
+		std::string password;
+		std::string home_address;
+		std::string mobile_number;
 	};
 
 	Abonent current;
 	gotoxy(x, y);
-	cout << "Введіть ПІБ: "; getline(cin, current.login);
-	current.login = RemoveSpaces(current.login);
+	std::cout << "Введіть ПІБ: "; std::getline(cin, current.login);
+	current.login = utils::RemoveSpaces(current.login);
 
-	if (InSystem(current.login) == true)
+	if (UserExists(current.login) == true)
 	{
-		system("cls");
+		Console::Clear();
 		gotoxy(x, y);
-		cout << "Аккаунт з таким ПІБ вже створений" << endl;
-		Sleep(1000);
+		std::cout << "Аккаунт з таким ПІБ вже створений" << endl;
+		Console::SleepMs(1000);
 		return;
 	}
 
 	gotoxy(x, y + 1);
-	cout << "Введіть пароль: "; getline(cin, current.password);
+	std::cout << "Введіть пароль: "; std::getline(cin, current.password);
 	gotoxy(x, y + 2);
-	cout << "Введіть домашню адресу: "; getline(cin, current.home_address);
+	std::cout << "Введіть домашню адресу: "; std::getline(cin, current.home_address);
 	gotoxy(x, y + 3);
-	cout << "Введіть мобільний телефон: "; getline(cin, current.mobile_number);
+	std::cout << "Введіть мобільний телефон: "; std::getline(cin, current.mobile_number);
 
 	ofstream out("Users.txt", ios::app);
 	out << current.login << " " << md5(current.password) << " " << current.home_address << " " << current.mobile_number << endl;
 	out.close();
 
-	system("cls");
+	Console::Clear();
 	gotoxy(x, y);
-	cout << "Реєстрація успішна" << endl;
-	Sleep(1000);
+	std::cout << "Реєстрація успішна" << endl;
+	Console::SleepMs(1000);
 }
 
-void TestProgram::start()
+void TestProgram::Run()
 {
 	while (true)
 	{
-		system("cls");
+		Console::Clear();
 		int c = Menu::select_vertical({ "Вхід", "Реєстрація", "Вихід" }, HorizontalAlignment::Center, 12);
 		switch (c)
 		{
 		case 0:
-			SingIn();
+			SignIn();
 			break;
 		case 1:
-			SingUp();
+			SignUp();
 			break;
 		case 2:
 			exit(0);

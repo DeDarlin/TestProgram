@@ -1,12 +1,13 @@
-﻿#pragma once
+#pragma once
+#include <string>
 #include "User.h"
-
-using namespace std;
 
 class Admin : public User
 {
+
 public:
-	Admin(string login, string password) : User(login, password) {}
+	Admin(const std::string login, const std::string password)
+		: User(login, password) {}
 
 	void AddCategory();
 
@@ -14,7 +15,7 @@ public:
 
 	void WorkWithTests();
 
-	void WorkWithUsers();
+	void UsersResults();
 
 	void menu();
 };

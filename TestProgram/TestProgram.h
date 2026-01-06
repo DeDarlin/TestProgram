@@ -1,20 +1,23 @@
-﻿#pragma once
+#pragma once
+#include <string>
 
-using namespace std;
+enum class Role
+{
+	Admin,
+	User
+};
 
 class TestProgram
 {
-	
-
 public:
 
-	bool InSystem(string login);
+	bool UserExists(const std::string& login);
 
-	string RemoveSpaces(const string& s);
+	Role DetectRole(const std::string& login);
 
-	void SingIn();
+	void SignIn();
 
-	void SingUp();
+	void SignUp();
 
-	void start();
+	void Run();
 };
